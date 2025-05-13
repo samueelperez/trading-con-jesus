@@ -6,58 +6,82 @@ import type { Exchange } from '@/types/portfolio'
 import { usePortfolio } from '@/hooks/use-portfolio'
 
 export default function PortfolioSummary() {
-  const { totalBalance, exchanges, loading, error } = usePortfolio()
+  const { totalBalance, exchanges, loading, error, refetch } = usePortfolio()
   const [editingId, setEditingId] = useState<string | null>(null)
   const [deletingId, setDeletingId] = useState<string | null>(null)
   const [newBalance, setNewBalance] = useState<number>(0)
+  const [newName, setNewName] = useState<string>('')
+  const [updateError, setUpdateError] = useState<string | null>(null)
+  const [deleteError, setDeleteError] = useState<string | null>(null)
 
   const updateExchange = async (id: string) => {
+    setUpdateError(null);
+    
     if (newBalance <= 0) {
-      return
+      setUpdateError('El balance debe ser mayor que 0');
+      return;
+    }
+
+    if (!newName.trim()) {
+      setUpdateError('El nombre del exchange es requerido');
+      return;
     }
 
     try {
-      const { error } = await supabase
+      const { error: updateError } = await supabase
         .from('exchanges')
-        .update({ balance: newBalance })
+        .update({ 
+          balance: newBalance,
+          name: newName.trim()
+        })
         .eq('id', id)
 
-      if (error) throw error
+      if (updateError) throw updateError
 
-      setEditingId(null)
+      await refetch();
+      setEditingId(null);
     } catch (err) {
-      console.error(err)
+      console.error(err);
+      setUpdateError(err instanceof Error ? err.message : 'Error al actualizar el exchange');
     }
   }
 
   const handleDelete = async (id: string) => {
-    if (!confirm('¿Estás seguro de que quieres eliminar este exchange?')) return
+    setDeleteError(null);
+    
+    if (!confirm('¿Estás seguro de que quieres eliminar este exchange?')) return;
 
-    setDeletingId(id)
+    setDeletingId(id);
 
     try {
-      const { error } = await supabase
+      const { error: deleteError } = await supabase
         .from('exchanges')
         .delete()
         .eq('id', id)
 
-      if (error) throw error
+      if (deleteError) throw deleteError
+
+      await refetch();
     } catch (err) {
-      console.error(err)
+      console.error(err);
+      setDeleteError(err instanceof Error ? err.message : 'Error al eliminar el exchange');
     } finally {
-      setDeletingId(null)
+      setDeletingId(null);
     }
   }
 
   // Iniciar edición
   const startEditing = (exchange: Exchange) => {
-    setEditingId(exchange.id)
-    setNewBalance(exchange.balance)
+    setEditingId(exchange.id);
+    setNewBalance(exchange.balance);
+    setNewName(exchange.name);
+    setUpdateError(null);
   }
 
   // Cancelar edición
   const cancelEditing = () => {
-    setEditingId(null)
+    setEditingId(null);
+    setUpdateError(null);
   }
 
   if (loading) {
@@ -94,6 +118,32 @@ export default function PortfolioSummary() {
 
   return (
     <div className="p-6">
+      {updateError && (
+        <div className="mb-4 rounded-md bg-red-50 p-4">
+          <div className="flex">
+            <div className="ml-3">
+              <h3 className="text-sm font-medium text-red-800">Error al actualizar</h3>
+              <div className="mt-2 text-sm text-red-700">
+                <p>{updateError}</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {deleteError && (
+        <div className="mb-4 rounded-md bg-red-50 p-4">
+          <div className="flex">
+            <div className="ml-3">
+              <h3 className="text-sm font-medium text-red-800">Error al eliminar</h3>
+              <div className="mt-2 text-sm text-red-700">
+                <p>{deleteError}</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
       <div className="mb-6">
         <h2 className="text-2xl font-bold leading-7 text-gray-900">Portfolio Total</h2>
         <div className="mt-4 overflow-hidden rounded-lg bg-white px-4 py-5 shadow sm:p-6">
@@ -146,7 +196,16 @@ export default function PortfolioSummary() {
                     {exchanges.map((exchange) => (
                       <tr key={exchange.id}>
                         <td className="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6">
-                          {exchange.name}
+                          {editingId === exchange.id ? (
+                            <input
+                              type="text"
+                              value={newName}
+                              onChange={(e) => setNewName(e.target.value)}
+                              className="w-36 rounded-md border-0 px-3 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-blue-300 focus:ring-2 focus:ring-inset focus:ring-blue-600 sm:text-sm sm:leading-6"
+                            />
+                          ) : (
+                            exchange.name
+                          )}
                         </td>
                         <td className="whitespace-nowrap px-3 py-4 text-sm">
                           {editingId === exchange.id ? (
