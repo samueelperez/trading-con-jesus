@@ -10,6 +10,7 @@ interface RiskCalculationResult {
     leverage: number
     positionSize: number
     collateral: number
+    realInvestment: number  // Cantidad real a invertir
   }[]
 }
 
@@ -57,11 +58,15 @@ export default function RiskCalculator() {
 
     // Sugerencias de apalancamiento
     const leverages = [1, 2, 3, 5, 10, 20, 50, 100]
-    const leverageSuggestions = leverages.map(leverage => ({
-      leverage,
-      positionSize: positionSize,
-      collateral: positionSize / leverage
-    }))
+    const leverageSuggestions = leverages.map(leverage => {
+      const collateral = positionSize / leverage
+      return {
+        leverage,
+        positionSize: positionSize,
+        collateral: collateral,
+        realInvestment: collateral // La inversión real es el colateral necesario
+      }
+    })
 
     setResult({
       positionSize,
@@ -195,7 +200,10 @@ export default function RiskCalculator() {
             </div>
 
             <div>
-              <h3 className="text-base font-semibold leading-7 text-gray-900">Sugerencias con Apalancamiento</h3>
+              <h3 className="text-base font-semibold leading-7 text-gray-900">Opciones según Apalancamiento</h3>
+              <p className="mt-1 text-sm leading-6 text-gray-600">
+                La columna "Cantidad a Invertir" muestra la cantidad real de dinero que debes introducir en la operación
+              </p>
               <div className="mt-4 flow-root">
                 <div className="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
                   <div className="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
@@ -205,7 +213,7 @@ export default function RiskCalculator() {
                           <tr>
                             <th scope="col" className="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-6">Apalancamiento</th>
                             <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Tamaño de Posición</th>
-                            <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Colateral Requerido</th>
+                            <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 bg-yellow-50">Cantidad a Invertir</th>
                             <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">% del Portfolio</th>
                           </tr>
                         </thead>
@@ -218,11 +226,11 @@ export default function RiskCalculator() {
                               <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
                                 ${suggestion.positionSize.toFixed(2)}
                               </td>
-                              <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-                                ${suggestion.collateral.toFixed(2)}
+                              <td className="whitespace-nowrap px-3 py-4 text-sm font-semibold text-blue-700 bg-yellow-50">
+                                ${suggestion.realInvestment.toFixed(2)}
                               </td>
                               <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-                                {((suggestion.collateral / portfolioValue) * 100).toFixed(2)}%
+                                {((suggestion.realInvestment / portfolioValue) * 100).toFixed(2)}%
                               </td>
                             </tr>
                           ))}
