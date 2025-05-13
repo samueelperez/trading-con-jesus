@@ -1,13 +1,14 @@
-import type { Metadata } from "next";
-import { Inter } from "next/font/google";
-import "./globals.css";
+import './globals.css'
+import type { Metadata } from 'next'
+import { Inter } from 'next/font/google'
+import NavBar from '@/components/layout/nav-bar'
 
-const inter = Inter({ subsets: ["latin"] });
+const inter = Inter({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
-  title: "Trading Con Jesús",
-  description: "Plataforma de trading con análisis técnico y fundamental",
-};
+  title: 'Trading Con Jesús',
+  description: 'Aplicación para el registro de operaciones de trading y cálculo de comisiones',
+}
 
 export default function RootLayout({
   children,
@@ -15,28 +16,15 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="es" className="h-full bg-gray-50">
-      <body className={`${inter.className} h-full`}>
-        <div className="min-h-full">
-          <nav className="bg-white shadow-sm">
-            <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-              <div className="flex h-16 justify-between">
-                <div className="flex">
-                  <div className="flex flex-shrink-0 items-center">
-                    <span className="text-2xl font-bold text-blue-600">TCJ</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </nav>
-
-          <main className="py-10">
-            <div className="mx-auto max-w-7xl sm:px-6 lg:px-8">
-              {children}
-            </div>
+    <html lang="es">
+      <body className={inter.className}>
+        <div className="min-h-screen bg-gray-50">
+          <NavBar />
+          <main className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
+            {children}
           </main>
         </div>
       </body>
     </html>
-  );
+  )
 }
