@@ -1,37 +1,18 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { supabase } from '@/lib/supabase/config'
 import type { Exchange } from '@/types/portfolio'
+import { usePortfolio } from '@/hooks/use-portfolio'
 
 export default function PortfolioSummary() {
-  const [exchanges, setExchanges] = useState<Exchange[]>([])
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
+  const { totalBalance, exchanges, loading, error } = usePortfolio()
   const [editingId, setEditingId] = useState<string | null>(null)
   const [deletingId, setDeletingId] = useState<string | null>(null)
   const [newBalance, setNewBalance] = useState<number>(0)
 
-  const fetchExchanges = async () => {
-    try {
-      const { data, error } = await supabase
-        .from('exchanges')
-        .select('*')
-        .order('created_at', { ascending: false })
-
-      if (error) throw error
-
-      setExchanges(data || [])
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Error al cargar los exchanges')
-    } finally {
-      setLoading(false)
-    }
-  }
-
   const updateExchange = async (id: string) => {
     if (newBalance <= 0) {
-      setError('El balance debe ser mayor a 0')
       return
     }
 
@@ -43,15 +24,9 @@ export default function PortfolioSummary() {
 
       if (error) throw error
 
-      // Actualizar localmente
-      setExchanges(prevExchanges => 
-        prevExchanges.map(exchange => 
-          exchange.id === id ? { ...exchange, balance: newBalance } : exchange
-        )
-      )
       setEditingId(null)
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Error al actualizar el exchange')
+      console.error(err)
     }
   }
 
@@ -59,7 +34,6 @@ export default function PortfolioSummary() {
     if (!confirm('¿Estás seguro de que quieres eliminar este exchange?')) return
 
     setDeletingId(id)
-    setError(null)
 
     try {
       const { error } = await supabase
@@ -68,11 +42,8 @@ export default function PortfolioSummary() {
         .eq('id', id)
 
       if (error) throw error
-
-      // Actualizar localmente
-      setExchanges(prevExchanges => prevExchanges.filter(exchange => exchange.id !== id))
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Error al eliminar el exchange')
+      console.error(err)
     } finally {
       setDeletingId(null)
     }
@@ -88,23 +59,6 @@ export default function PortfolioSummary() {
   const cancelEditing = () => {
     setEditingId(null)
   }
-
-  useEffect(() => {
-    fetchExchanges()
-
-    const channel = supabase
-      .channel('exchanges_changes')
-      .on('postgres_changes', { event: '*', schema: 'public', table: 'exchanges' }, () => {
-        fetchExchanges()
-      })
-      .subscribe()
-
-    return () => {
-      supabase.removeChannel(channel)
-    }
-  }, [])
-
-  const totalBalance = exchanges.reduce((sum, exchange) => sum + exchange.balance, 0)
 
   if (loading) {
     return (
@@ -208,7 +162,7 @@ export default function PortfolioSummary() {
                           )}
                         </td>
                         <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-                          {((exchange.balance / totalBalance) * 100).toFixed(2)}%
+                          {totalBalance > 0 ? ((exchange.balance / totalBalance) * 100).toFixed(2) : '0.00'}%
                         </td>
                         <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
                           {new Date(exchange.created_at).toLocaleDateString()}

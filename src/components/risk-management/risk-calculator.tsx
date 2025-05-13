@@ -1,6 +1,7 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
+import { usePortfolio } from '@/hooks/use-portfolio'
 
 interface RiskCalculationResult {
   positionSize: number
@@ -15,12 +16,21 @@ interface RiskCalculationResult {
 }
 
 export default function RiskCalculator() {
+  const { totalBalance: portfolioFromDB, loading: portfolioLoading } = usePortfolio()
   const [portfolioValue, setPortfolioValue] = useState<number>(0)
   const [entryPrice, setEntryPrice] = useState<number>(0)
   const [stopLoss, setStopLoss] = useState<number>(0)
   const [riskPercentage, setRiskPercentage] = useState<number>(1)
   const [result, setResult] = useState<RiskCalculationResult | null>(null)
   const [error, setError] = useState<string | null>(null)
+  const [usePortfolioFromDB, setUsePortfolioFromDB] = useState(true)
+
+  // Actualizar el valor del portfolio cuando se carga desde la base de datos
+  useEffect(() => {
+    if (portfolioFromDB > 0 && usePortfolioFromDB) {
+      setPortfolioValue(portfolioFromDB)
+    }
+  }, [portfolioFromDB, usePortfolioFromDB])
 
   const calculateRisk = () => {
     setError(null)
@@ -103,14 +113,35 @@ export default function RiskCalculator() {
               Valor del Portfolio ($)
             </label>
             <div className="mt-2">
-              <input
-                type="number"
-                id="portfolioValue"
-                value={portfolioValue || ''}
-                onChange={(e) => setPortfolioValue(parseFloat(e.target.value) || 0)}
-                className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-blue-600 sm:text-sm sm:leading-6"
-                placeholder="Ej: 10000"
-              />
+              <div className="flex items-center space-x-2">
+                <input
+                  type="number"
+                  id="portfolioValue"
+                  value={portfolioValue || ''}
+                  onChange={(e) => {
+                    setPortfolioValue(parseFloat(e.target.value) || 0)
+                    setUsePortfolioFromDB(false)
+                  }}
+                  className={`block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ${
+                    usePortfolioFromDB ? 'ring-green-300 bg-green-50' : 'ring-gray-300'
+                  } placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-blue-600 sm:text-sm sm:leading-6`}
+                  placeholder={portfolioLoading ? 'Cargando...' : 'Ej: 10000'}
+                />
+                <button
+                  onClick={() => {
+                    setUsePortfolioFromDB(true)
+                    setPortfolioValue(portfolioFromDB)
+                  }}
+                  className="px-3 py-1.5 text-xs font-medium text-white bg-green-600 rounded-md hover:bg-green-500"
+                >
+                  Usar Portfolio
+                </button>
+              </div>
+              {usePortfolioFromDB && (
+                <p className="mt-1 text-xs text-green-600">
+                  Usando el valor total de la sección Portfolio
+                </p>
+              )}
             </div>
           </div>
 
