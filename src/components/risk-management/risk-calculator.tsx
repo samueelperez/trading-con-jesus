@@ -122,7 +122,7 @@ export default function RiskCalculator() {
                     setPortfolioValue(parseFloat(e.target.value) || 0)
                     setUsePortfolioFromDB(false)
                   }}
-                  className={`block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ${
+                  className={`block w-full rounded-md border-0 px-3 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ${
                     usePortfolioFromDB ? 'ring-green-300 bg-green-50' : 'ring-gray-300'
                   } placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-blue-600 sm:text-sm sm:leading-6`}
                   placeholder={portfolioLoading ? 'Cargando...' : 'Ej: 10000'}
@@ -155,7 +155,7 @@ export default function RiskCalculator() {
                 id="entryPrice"
                 value={entryPrice || ''}
                 onChange={(e) => setEntryPrice(parseFloat(e.target.value) || 0)}
-                className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-blue-600 sm:text-sm sm:leading-6"
+                className="block w-full rounded-md border-0 px-3 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-blue-600 sm:text-sm sm:leading-6"
                 placeholder="Ej: 100"
               />
             </div>
@@ -171,7 +171,7 @@ export default function RiskCalculator() {
                 id="stopLoss"
                 value={stopLoss || ''}
                 onChange={(e) => setStopLoss(parseFloat(e.target.value) || 0)}
-                className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-blue-600 sm:text-sm sm:leading-6"
+                className="block w-full rounded-md border-0 px-3 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-blue-600 sm:text-sm sm:leading-6"
                 placeholder="Ej: 95"
               />
             </div>
@@ -187,7 +187,7 @@ export default function RiskCalculator() {
                 id="riskPercentage"
                 value={riskPercentage || ''}
                 onChange={(e) => setRiskPercentage(parseFloat(e.target.value) || 0)}
-                className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-blue-600 sm:text-sm sm:leading-6"
+                className="block w-full rounded-md border-0 px-3 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-blue-600 sm:text-sm sm:leading-6"
                 placeholder="Ej: 1"
               />
             </div>
