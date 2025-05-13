@@ -18,9 +18,9 @@ export default function NavBar() {
     <header className="bg-white">
       <nav className="mx-auto flex max-w-7xl items-center justify-between p-6 lg:px-8" aria-label="Global">
         <div className="flex lg:flex-1">
-          <a href="/" className="-m-1.5 p-1.5 text-xl font-bold text-blue-600">
+          <Link href="/" className="-m-1.5 p-1.5 text-xl font-bold text-blue-600">
             Trading Con Jesús
-          </a>
+          </Link>
         </div>
         <div className="flex lg:hidden">
           <button
@@ -57,9 +57,9 @@ export default function NavBar() {
           <div className="fixed inset-0 z-10"></div>
           <div className="fixed inset-y-0 right-0 z-10 w-full overflow-y-auto bg-white px-6 py-6 sm:max-w-sm sm:ring-1 sm:ring-gray-900/10">
             <div className="flex items-center justify-between">
-              <a href="#" className="-m-1.5 p-1.5 text-xl font-bold text-blue-600">
+              <Link href="/" className="-m-1.5 p-1.5 text-xl font-bold text-blue-600">
                 Trading Con Jesús
-              </a>
+              </Link>
               <button
                 type="button"
                 className="-m-2.5 rounded-md p-2.5 text-gray-700"

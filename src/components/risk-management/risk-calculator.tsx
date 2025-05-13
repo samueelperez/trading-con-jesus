@@ -17,6 +17,7 @@ interface RiskCalculationResult {
 
 export default function RiskCalculator() {
   const { totalBalance: portfolioFromDB, loading: portfolioLoading } = usePortfolio()
+  const [usePortfolioFromDB, setUsePortfolioFromDB] = useState(true)
   const [portfolioValue, setPortfolioValue] = useState<number>(0)
   const [portfolioValueText, setPortfolioValueText] = useState<string>(usePortfolioFromDB ? "" : "0")
   const [entryPrice, setEntryPrice] = useState<number>(0)
@@ -27,7 +28,6 @@ export default function RiskCalculator() {
   const [riskPercentageText, setRiskPercentageText] = useState<string>("1")
   const [result, setResult] = useState<RiskCalculationResult | null>(null)
   const [error, setError] = useState<string | null>(null)
-  const [usePortfolioFromDB, setUsePortfolioFromDB] = useState(true)
 
   // Actualizar el valor del portfolio cuando se carga desde la base de datos
   useEffect(() => {
@@ -298,7 +298,7 @@ export default function RiskCalculator() {
             <div>
               <h3 className="text-base font-semibold leading-7 text-gray-900">Opciones según Apalancamiento</h3>
               <p className="mt-1 text-sm leading-6 text-gray-600">
-                La columna "Cantidad a Invertir" muestra la cantidad real de dinero que debes introducir en la operación
+                La columna &quot;Cantidad a Invertir&quot; muestra la cantidad real de dinero que debes introducir en la operación
               </p>
               <div className="mt-4 flow-root">
                 <div className="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
