@@ -26,6 +26,7 @@ export default function RiskCalculator() {
   const [stopLossText, setStopLossText] = useState<string>("0")
   const [riskPercentage, setRiskPercentage] = useState<number>(1)
   const [riskPercentageText, setRiskPercentageText] = useState<string>("1")
+  const [positionType, setPositionType] = useState<'LONG' | 'SHORT'>('LONG')
   const [result, setResult] = useState<RiskCalculationResult | null>(null)
   const [error, setError] = useState<string | null>(null)
 
@@ -61,14 +62,22 @@ export default function RiskCalculator() {
       return
     }
 
-    if (entryPrice <= stopLoss) {
-      setError('Para posiciones long, el stop loss debe ser menor que el precio de entrada')
+    // Validación según tipo de posición
+    if (positionType === 'LONG' && entryPrice <= stopLoss) {
+      setError('Para posiciones LONG, el stop loss debe ser menor que el precio de entrada')
       return
     }
 
-    // Cálculos
+    if (positionType === 'SHORT' && entryPrice >= stopLoss) {
+      setError('Para posiciones SHORT, el stop loss debe ser mayor que el precio de entrada')
+      return
+    }
+
+    // Cálculos según tipo de posición
     const riskAmount = portfolioValue * (riskPercentage / 100)
-    const stopLossPoints = entryPrice - stopLoss
+    const stopLossPoints = positionType === 'LONG' 
+      ? entryPrice - stopLoss 
+      : stopLoss - entryPrice
     const positionSize = riskAmount / (stopLossPoints / entryPrice)
 
     // Sugerencias de apalancamiento
@@ -201,6 +210,23 @@ export default function RiskCalculator() {
           </div>
 
           <div>
+            <label htmlFor="positionType" className="block text-sm font-medium leading-6 text-gray-900">
+              Tipo de Posición
+            </label>
+            <div className="mt-2">
+              <select
+                id="positionType"
+                value={positionType}
+                onChange={(e) => setPositionType(e.target.value as 'LONG' | 'SHORT')}
+                className="block w-full rounded-md border-0 px-3 py-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-blue-600 sm:text-sm sm:leading-6"
+              >
+                <option value="LONG">LONG (Alcista)</option>
+                <option value="SHORT">SHORT (Bajista)</option>
+              </select>
+            </div>
+          </div>
+
+          <div>
             <label htmlFor="entryPrice" className="block text-sm font-medium leading-6 text-gray-900">
               Precio de Entrada ($)
             </label>
@@ -227,8 +253,13 @@ export default function RiskCalculator() {
                 value={stopLossText}
                 onChange={handleStopLossChange}
                 className="block w-full rounded-md border-0 px-3 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-blue-600 sm:text-sm sm:leading-6"
-                placeholder="Ej: 95"
+                placeholder={positionType === 'LONG' ? 'Menor que entrada' : 'Mayor que entrada'}
               />
+              <p className="mt-1 text-xs text-blue-600">
+                {positionType === 'LONG' 
+                  ? 'Para LONG: Stop Loss debe ser menor que el precio de entrada' 
+                  : 'Para SHORT: Stop Loss debe ser mayor que el precio de entrada'}
+              </p>
             </div>
           </div>
 
