@@ -210,19 +210,28 @@ export default function RiskCalculator() {
               <div className="flex">
                 <div className="ml-3 flex-1">
                   <h3 className="text-sm font-medium text-blue-800">Resultado</h3>
-                  <div className="mt-2 text-sm text-blue-700">
-                    <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-                      <div>
-                        <p className="font-medium">Cantidad a arriesgar:</p>
-                        <p>${result.riskAmount.toFixed(2)}</p>
+                  <div className="mt-4 text-sm">
+                    <div className="grid grid-cols-1 gap-6 sm:grid-cols-3">
+                      <div className="overflow-hidden rounded-lg bg-white px-4 py-5 shadow">
+                        <dt className="truncate text-sm font-medium text-gray-500">Cantidad a arriesgar</dt>
+                        <dd className="mt-1 text-2xl font-semibold tracking-tight text-red-600">
+                          ${result.riskAmount.toLocaleString('es-ES', {minimumFractionDigits: 2, maximumFractionDigits: 2})}
+                        </dd>
                       </div>
-                      <div>
-                        <p className="font-medium">Puntos de Stop Loss:</p>
-                        <p>{result.stopLossPoints.toFixed(2)} ({((result.stopLossPoints / entryPrice) * 100).toFixed(2)}%)</p>
+                      <div className="overflow-hidden rounded-lg bg-white px-4 py-5 shadow">
+                        <dt className="truncate text-sm font-medium text-gray-500">Puntos de Stop Loss</dt>
+                        <dd className="mt-1 text-2xl font-semibold tracking-tight text-gray-900">
+                          {result.stopLossPoints.toLocaleString('es-ES', {minimumFractionDigits: 2, maximumFractionDigits: 2})}
+                          <span className="ml-2 text-sm text-gray-500">
+                            ({((result.stopLossPoints / entryPrice) * 100).toFixed(2)}%)
+                          </span>
+                        </dd>
                       </div>
-                      <div>
-                        <p className="font-medium">Tamaño de posición recomendado:</p>
-                        <p>${result.positionSize.toFixed(2)}</p>
+                      <div className="overflow-hidden rounded-lg bg-white px-4 py-5 shadow">
+                        <dt className="truncate text-sm font-medium text-gray-500">Tamaño de posición recomendado</dt>
+                        <dd className="mt-1 text-2xl font-semibold tracking-tight text-blue-600">
+                          ${result.positionSize.toLocaleString('es-ES', {minimumFractionDigits: 2, maximumFractionDigits: 2})}
+                        </dd>
                       </div>
                     </div>
                   </div>
@@ -242,26 +251,38 @@ export default function RiskCalculator() {
                       <table className="min-w-full divide-y divide-gray-300">
                         <thead className="bg-gray-50">
                           <tr>
-                            <th scope="col" className="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-6">Apalancamiento</th>
-                            <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Tamaño de Posición</th>
-                            <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 bg-yellow-50">Cantidad a Invertir</th>
-                            <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">% del Portfolio</th>
+                            <th scope="col" className="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-6">
+                              Apalancamiento
+                            </th>
+                            <th scope="col" className="px-3 py-3.5 text-right text-sm font-semibold text-gray-900">
+                              Tamaño de Posición
+                            </th>
+                            <th scope="col" className="px-3 py-3.5 text-right text-sm font-semibold text-gray-900 bg-yellow-50">
+                              Cantidad a Invertir
+                            </th>
+                            <th scope="col" className="px-3 py-3.5 text-right text-sm font-semibold text-gray-900">
+                              % del Portfolio
+                            </th>
                           </tr>
                         </thead>
                         <tbody className="divide-y divide-gray-200 bg-white">
                           {result.leverageSuggestions.map((suggestion) => (
-                            <tr key={suggestion.leverage}>
+                            <tr key={suggestion.leverage} className={suggestion.realInvestment / portfolioValue <= 0.05 ? 'bg-green-50' : ''}>
                               <td className="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6">
-                                {suggestion.leverage}x
+                                <span className="font-bold">{suggestion.leverage}x</span>
                               </td>
-                              <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-                                ${suggestion.positionSize.toFixed(2)}
+                              <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-700 text-right">
+                                ${suggestion.positionSize.toLocaleString('es-ES', {minimumFractionDigits: 2, maximumFractionDigits: 2})}
                               </td>
-                              <td className="whitespace-nowrap px-3 py-4 text-sm font-semibold text-blue-700 bg-yellow-50">
-                                ${suggestion.realInvestment.toFixed(2)}
+                              <td className="whitespace-nowrap px-3 py-4 text-sm font-semibold text-blue-700 bg-yellow-50 text-right">
+                                ${suggestion.realInvestment.toLocaleString('es-ES', {minimumFractionDigits: 2, maximumFractionDigits: 2})}
                               </td>
-                              <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-                                {((suggestion.realInvestment / portfolioValue) * 100).toFixed(2)}%
+                              <td className="whitespace-nowrap px-3 py-4 text-sm text-right">
+                                <span className={`${(suggestion.realInvestment / portfolioValue) <= 0.02 ? 'text-green-600 font-medium' : 
+                                  (suggestion.realInvestment / portfolioValue) <= 0.05 ? 'text-blue-600' : 
+                                  (suggestion.realInvestment / portfolioValue) >= 0.2 ? 'text-red-600 font-medium' : 'text-gray-600'}`}>
+                                  {((suggestion.realInvestment / portfolioValue) * 100).toFixed(2)}%
+                                </span>
                               </td>
                             </tr>
                           ))}
