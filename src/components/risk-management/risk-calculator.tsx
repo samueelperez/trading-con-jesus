@@ -18,9 +18,13 @@ interface RiskCalculationResult {
 export default function RiskCalculator() {
   const { totalBalance: portfolioFromDB, loading: portfolioLoading } = usePortfolio()
   const [portfolioValue, setPortfolioValue] = useState<number>(0)
+  const [portfolioValueText, setPortfolioValueText] = useState<string>(usePortfolioFromDB ? "" : "0")
   const [entryPrice, setEntryPrice] = useState<number>(0)
+  const [entryPriceText, setEntryPriceText] = useState<string>("0")
   const [stopLoss, setStopLoss] = useState<number>(0)
+  const [stopLossText, setStopLossText] = useState<string>("0")
   const [riskPercentage, setRiskPercentage] = useState<number>(1)
+  const [riskPercentageText, setRiskPercentageText] = useState<string>("1")
   const [result, setResult] = useState<RiskCalculationResult | null>(null)
   const [error, setError] = useState<string | null>(null)
   const [usePortfolioFromDB, setUsePortfolioFromDB] = useState(true)
@@ -29,6 +33,7 @@ export default function RiskCalculator() {
   useEffect(() => {
     if (portfolioFromDB > 0 && usePortfolioFromDB) {
       setPortfolioValue(portfolioFromDB)
+      setPortfolioValueText(portfolioFromDB.toString())
     }
   }, [portfolioFromDB, usePortfolioFromDB])
 
@@ -86,6 +91,62 @@ export default function RiskCalculator() {
     })
   }
 
+  const handlePortfolioValueChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    setPortfolioValueText(value);
+    setUsePortfolioFromDB(false);
+    
+    const numValue = parseFloat(value);
+    if (!isNaN(numValue)) {
+      setPortfolioValue(numValue);
+    } else {
+      setPortfolioValue(0);
+    }
+  };
+
+  const handleEntryPriceChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    setEntryPriceText(value);
+    
+    const numValue = parseFloat(value);
+    if (!isNaN(numValue)) {
+      setEntryPrice(numValue);
+    } else {
+      setEntryPrice(0);
+    }
+  };
+
+  const handleStopLossChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    setStopLossText(value);
+    
+    const numValue = parseFloat(value);
+    if (!isNaN(numValue)) {
+      setStopLoss(numValue);
+    } else {
+      setStopLoss(0);
+    }
+  };
+
+  const handleRiskPercentageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    setRiskPercentageText(value);
+    
+    const numValue = parseFloat(value);
+    if (!isNaN(numValue)) {
+      setRiskPercentage(numValue);
+    } else {
+      setRiskPercentage(0);
+    }
+  };
+
+  // Actualizar el valor del portfolio desde DB
+  const usePortfolioFromDBValue = () => {
+    setUsePortfolioFromDB(true);
+    setPortfolioValue(portfolioFromDB);
+    setPortfolioValueText(portfolioFromDB.toString());
+  };
+
   return (
     <div className="p-6">
       <h2 className="text-base font-semibold leading-7 text-gray-900">Calculadora de Gestión de Riesgo</h2>
@@ -115,23 +176,17 @@ export default function RiskCalculator() {
             <div className="mt-2">
               <div className="flex items-center space-x-2">
                 <input
-                  type="number"
+                  type="text"
                   id="portfolioValue"
-                  value={portfolioValue || ''}
-                  onChange={(e) => {
-                    setPortfolioValue(parseFloat(e.target.value) || 0)
-                    setUsePortfolioFromDB(false)
-                  }}
+                  value={portfolioValueText}
+                  onChange={handlePortfolioValueChange}
                   className={`block w-full rounded-md border-0 px-3 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ${
                     usePortfolioFromDB ? 'ring-green-300 bg-green-50' : 'ring-gray-300'
                   } placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-blue-600 sm:text-sm sm:leading-6`}
                   placeholder={portfolioLoading ? 'Cargando...' : 'Ej: 10000'}
                 />
                 <button
-                  onClick={() => {
-                    setUsePortfolioFromDB(true)
-                    setPortfolioValue(portfolioFromDB)
-                  }}
+                  onClick={usePortfolioFromDBValue}
                   className="px-3 py-1.5 text-xs font-medium text-white bg-green-600 rounded-md hover:bg-green-500"
                 >
                   Usar Portfolio
@@ -151,10 +206,10 @@ export default function RiskCalculator() {
             </label>
             <div className="mt-2">
               <input
-                type="number"
+                type="text"
                 id="entryPrice"
-                value={entryPrice || ''}
-                onChange={(e) => setEntryPrice(parseFloat(e.target.value) || 0)}
+                value={entryPriceText}
+                onChange={handleEntryPriceChange}
                 className="block w-full rounded-md border-0 px-3 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-blue-600 sm:text-sm sm:leading-6"
                 placeholder="Ej: 100"
               />
@@ -167,10 +222,10 @@ export default function RiskCalculator() {
             </label>
             <div className="mt-2">
               <input
-                type="number"
+                type="text"
                 id="stopLoss"
-                value={stopLoss || ''}
-                onChange={(e) => setStopLoss(parseFloat(e.target.value) || 0)}
+                value={stopLossText}
+                onChange={handleStopLossChange}
                 className="block w-full rounded-md border-0 px-3 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-blue-600 sm:text-sm sm:leading-6"
                 placeholder="Ej: 95"
               />
@@ -183,14 +238,11 @@ export default function RiskCalculator() {
             </label>
             <div className="mt-2">
               <input
-                type="number"
+                type="text"
                 id="riskPercentage"
                 name="riskPercentage"
-                step="0.01"
-                min="0.01"
-                max="100"
-                value={riskPercentage || ''}
-                onChange={(e) => setRiskPercentage(parseFloat(e.target.value) || 0)}
+                value={riskPercentageText}
+                onChange={handleRiskPercentageChange}
                 className="block w-full rounded-md border-0 px-3 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-blue-600 sm:text-sm sm:leading-6"
                 placeholder="Ej: 0.5"
               />
