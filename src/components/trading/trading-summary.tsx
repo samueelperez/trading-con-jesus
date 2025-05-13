@@ -27,7 +27,7 @@ export default function TradingSummary() {
     }, 0)
     const totalCommissions = trades.filter(
       trade => trade.status === 'WIN' && trade.profit_loss > 20
-    ).length * 8
+    ).length * 6
     const netProfit = totalProfit - totalCommissions
 
     setSummary({

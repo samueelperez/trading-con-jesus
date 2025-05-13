@@ -206,7 +206,7 @@ export default function TradesList({ onTradeDeleted }: TradesListProps) {
                         </span>
                       </td>
                       <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-                        {trade.status === 'WIN' && trade.profit_loss > 20 ? '$8.00' : '-'}
+                        {trade.status === 'WIN' && trade.profit_loss > 20 ? '$6.00' : '-'}
                       </td>
                       <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
                         {new Date(trade.created_at).toLocaleDateString()}
