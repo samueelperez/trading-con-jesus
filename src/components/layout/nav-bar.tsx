@@ -11,6 +11,7 @@ export default function NavBar() {
   const navigation = [
     { name: 'Operaciones', href: '/' },
     { name: 'Gestión de Riesgo', href: '/risk-management' },
+    { name: 'Portfolio', href: '/portfolio' },
   ]
 
   return (
