@@ -145,16 +145,7 @@ export default function TradesList({ onTradeDeleted }: TradesListProps) {
                       Símbolo
                     </th>
                     <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
-                      Trader
-                    </th>
-                    <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
-                      Tipo
-                    </th>
-                    <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
-                      Posición
-                    </th>
-                    <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
-                      Estado
+                      Resultado
                     </th>
                     <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
                       Profit/Loss
@@ -176,23 +167,12 @@ export default function TradesList({ onTradeDeleted }: TradesListProps) {
                       <td className="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6">
                         {trade.symbol}
                       </td>
-                      <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-                        {trade.trader}
-                      </td>
-                      <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-                        {trade.trade_type}
-                      </td>
-                      <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-                        {trade.position}
-                      </td>
                       <td className="whitespace-nowrap px-3 py-4 text-sm">
-                        <span
-                          className={`inline-flex items-center rounded-md px-2 py-1 text-xs font-medium ${
-                            trade.status === 'WIN'
-                              ? 'bg-green-50 text-green-700 ring-1 ring-inset ring-green-600/20'
-                              : 'bg-red-50 text-red-700 ring-1 ring-inset ring-red-600/20'
-                          }`}
-                        >
+                        <span className={`inline-flex rounded-full px-2 text-xs font-semibold leading-5 ${
+                          trade.status === 'WIN' 
+                            ? 'bg-green-100 text-green-800' 
+                            : 'bg-red-100 text-red-800'
+                        }`}>
                           {trade.status === 'WIN' ? 'Ganancia' : 'Pérdida'}
                         </span>
                       </td>
