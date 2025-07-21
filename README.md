@@ -1,72 +1,145 @@
-# Trading Con Jesús
+# Trading Con Jesús - App Móvil
 
-Aplicación web para el registro y seguimiento de operaciones de trading, incluyendo el cálculo automático de comisiones.
+Aplicación móvil para el registro y seguimiento de operaciones de trading, incluyendo el cálculo automático de comisiones.
 
 ## Características
 
-- Registro de operaciones de trading
-- Seguimiento de ganancias y pérdidas
-- Cálculo automático de comisiones
-- Resumen contable en tiempo real
-- Soporte para múltiples traders
-- Diferentes tipos de operaciones (Swing/Quickie)
+- 📱 **Aplicación móvil nativa** con React Native y Expo
+- 💰 **Registro de operaciones** de trading con símbolo, resultado y profit/loss
+- 📊 **Resumen contable** automático con totales y comisiones
+- 🏦 **Gestión de portfolio** con múltiples exchanges
+- ⚡ **Actualizaciones en tiempo real** usando Supabase
+- 🎨 **Interfaz moderna** y fácil de usar
 
 ## Tecnologías
 
-- Next.js 14
-- TypeScript
-- TailwindCSS
-- Supabase
-- React Server Components
+- **React Native** - Framework para desarrollo móvil
+- **Expo** - Plataforma de desarrollo y despliegue
+- **TypeScript** - Tipado estático
+- **Supabase** - Base de datos y backend
+- **React Navigation** - Navegación entre pantallas
 
-## Requisitos
+## Instalación
 
-- Node.js 18.17 o superior
-- Cuenta en Supabase
+1. **Clonar el repositorio:**
+   ```bash
+   git clone <repository-url>
+   cd trading-con-jesus-app
+   ```
 
-## Configuración
+2. **Instalar dependencias:**
+   ```bash
+   npm install
+   ```
 
-1. Clona el repositorio:
+3. **Ejecutar la aplicación:**
+   ```bash
+   # Para iOS
+   npm run ios
+   
+   # Para Android
+   npm run android
+   
+   # Para desarrollo web
+   npm run web
+   ```
+
+## Estructura del Proyecto
+
+```
+src/
+├── lib/
+│   └── supabase.ts          # Configuración de Supabase
+├── types/
+│   └── trading.ts           # Tipos TypeScript
+├── hooks/
+│   └── usePortfolio.ts      # Hook para gestión del portfolio
+└── screens/
+    ├── TradingScreen.tsx    # Pantalla principal de operaciones
+    ├── AddTradeScreen.tsx   # Pantalla para añadir operaciones
+    └── PortfolioScreen.tsx  # Pantalla de gestión de portfolio
+```
+
+## Funcionalidades
+
+### Operaciones de Trading
+- Ver lista de todas las operaciones
+- Resumen contable automático
+- Eliminar operaciones
+- Actualizaciones en tiempo real
+
+### Nueva Operación
+- Formulario para registrar operaciones
+- Validación de datos
+- Símbolo, resultado (ganancia/pérdida) y profit/loss
+
+### Portfolio
+- Gestión de exchanges
+- Balance total del portfolio
+- Añadir, editar y eliminar exchanges
+- Porcentajes de distribución
+
+## Base de Datos
+
+La aplicación utiliza la misma base de datos Supabase que la versión web:
+
+### Tabla `trades`
+- `id` - Identificador único
+- `symbol` - Símbolo del activo
+- `status` - WIN o LOSS
+- `profit_loss` - Cantidad de profit o pérdida
+- `commission_paid` - Estado de la comisión
+- `created_at` - Fecha de creación
+
+### Tabla `exchanges`
+- `id` - Identificador único
+- `name` - Nombre del exchange
+- `balance` - Balance en USDT
+- `created_at` - Fecha de creación
+
+## Comisiones
+
+- **$6.00** por operación ganadora con profit > $20
+- Cálculo automático en el resumen contable
+
+## Desarrollo
+
+### Scripts Disponibles
+
+- `npm start` - Iniciar servidor de desarrollo
+- `npm run android` - Ejecutar en Android
+- `npm run ios` - Ejecutar en iOS
+- `npm run web` - Ejecutar en web
+- `npm run build` - Construir para producción
+
+### Configuración de Supabase
+
+La aplicación está configurada para usar la misma base de datos que la versión web. Las credenciales están en `lib/supabase.ts`.
+
+## Despliegue
+
+### Expo Go
+1. Instalar Expo Go en tu dispositivo móvil
+2. Ejecutar `npm start`
+3. Escanear el código QR con Expo Go
+
+### Build Nativo
 ```bash
-git clone https://github.com/tu-usuario/trading-con-jesus.git
-cd trading-con-jesus
+# Para Android
+expo build:android
+
+# Para iOS
+expo build:ios
 ```
 
-2. Instala las dependencias:
-```bash
-npm install
-```
+## Contribución
 
-3. Crea un archivo `.env.local` con las variables de entorno de Supabase:
-```env
-NEXT_PUBLIC_SUPABASE_URL=tu_url_de_supabase
-NEXT_PUBLIC_SUPABASE_ANON_KEY=tu_clave_anonima_de_supabase
-```
-
-4. Inicia el servidor de desarrollo:
-```bash
-npm run dev
-```
-
-## Estructura de la Base de Datos
-
-La aplicación utiliza una tabla `trades` en Supabase con la siguiente estructura:
-
-```sql
-CREATE TABLE trades (
-  id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
-  symbol TEXT NOT NULL,
-  position TEXT NOT NULL CHECK (position IN ('LONG', 'SHORT')),
-  status TEXT NOT NULL CHECK (status IN ('WIN', 'LOSS')),
-  profit_loss DECIMAL NOT NULL,
-  commission_paid BOOLEAN DEFAULT FALSE,
-  notes TEXT,
-  trader TEXT NOT NULL CHECK (trader IN ('Vivian', 'Stefan', 'Foxian')),
-  trade_type TEXT NOT NULL CHECK (trade_type IN ('Swing', 'Quickie')),
-  created_at TIMESTAMP WITH TIME ZONE DEFAULT TIMEZONE('utc'::text, NOW())
-);
-```
+1. Fork el proyecto
+2. Crear una rama para tu feature
+3. Commit tus cambios
+4. Push a la rama
+5. Abrir un Pull Request
 
 ## Licencia
 
-MIT
+Este proyecto está bajo la Licencia MIT.
