@@ -2,7 +2,6 @@
 
 import { useState, useRef } from 'react'
 import { supabase } from '@/lib/supabase/config'
-import type { Trade } from '@/types/trading'
 
 interface NewTradeFormProps {
   onTradeAdded?: () => void
@@ -66,9 +65,7 @@ export default function NewTradeForm({ onTradeAdded }: NewTradeFormProps) {
     }
   }
 
-  const handleStatusChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    setStatus(e.target.value as 'WIN' | 'LOSS')
-  }
+
 
   return (
     <div className="p-6">
